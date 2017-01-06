@@ -26,8 +26,8 @@ Please note, that the Bat-Pi normally does not log temperatures. We built our ow
 
 Also note that a special ImporterModule for the BatScope software is needed in order to read the XML meta data files. (See the Bat-Pi v1 Importer below). 
 
-## BatPi1ImporterModule.py
-#### Special importer module for the transfer of Bat Pi recordings into a BatScope 3 database
+## Bat-Pi v1 Importer (BatPi1ImporterModule.py)
+#### Importer module for the transfer of Bat Pi recordings into a BatScope 3 database
 
 In order to import the Bat Pi 1 wav files and their corresponding XML metadata, this script must reside on the BatScope Computer in the directory where BatScope's importer modules reside. This directory usually is:<br><b>/Library/Application Support/BatScope/ImporterModules</b>
 
