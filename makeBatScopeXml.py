@@ -17,7 +17,7 @@
 # Author: Fred Van Gestel - ffhmonitor@gmail.com
 # Tested under Linux Mint 17.3 Rosa and Mac OS X 10.7.5
 
-# This file on GitHub: https://github.com/ffhmon/bat-project/makeBatScopeXml.py
+# This file on GitHub: https://github.com/ffhmon/bat-project/blob/master/makeBatScopeXml.py
 # Licence: GNU General Public Licence v3
 
 # Script Version 1.0 - January 6, 2017
