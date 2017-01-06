@@ -58,9 +58,7 @@ def getWavFileTemperature(wavFile, envLogFile, timeSavingCorrection):
     		
         currentWav = os.path.basename(wavFile)
         wavFileDateElements = parseWavFileDateTime(currentWav)
-        
-        #wavDateTime = wavDateTime - datetime.timedelta(hours=timeSavingCorrection)
-
+                
         # get temperature from environment file
         if os.path.exists(environmentFile):
             with open (environmentFile) as tempFile:
@@ -147,7 +145,6 @@ import datetime, glob, linecache, os, sys
 # default variables - can be changed by sys.argv ###
 
 # default base path for all data and bin files
-# basePath = "/home/fred/projekte/batpi/raw/20160709-tr1/"
 basePath = os.getcwd() + '/'
 
 # default UTC time correction in hours for time stamp calculations.
