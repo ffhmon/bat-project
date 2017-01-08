@@ -13,7 +13,7 @@ FVG, January 2017
 
 ## makeBatScopeXml.py
 #### Georeferencing Bat-Pi recordings and prepare the transfer to bat call analyzer software
-Script for the <a href="http://www.bat-pi.eu/EN/index-EN.html"  target="_blank">Bat-Pi&nbsp;1</a> (first edition). It georeferences all wav files and creates an XML meta data file for each recording, allowing them to be transferred to <a href="http://www.wsl.ch/dienstleistungen/produkte/software/batscope/index_EN" target="_blank">BatScope&nbsp;3</a>, a bat call analyser and classification software for MAc OS X. 
+Script for the <a href="http://www.bat-pi.eu/EN/index-EN.html"  target="_blank">Bat-Pi&nbsp;1</a> (first edition). It georeferences all wav files and creates an XML meta data file for each recording, allowing them to be transferred to <a href="http://www.wsl.ch/dienstleistungen/produkte/software/batscope/index_EN" target="_blank">BatScope&nbsp;3</a>, a bat call analyser and classification software for Mac OS X. 
 
 What this script does:
 <ul><li>it reads current Bat Pi device settings from /out/bin/recordings.sh
