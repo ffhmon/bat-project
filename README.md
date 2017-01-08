@@ -1,17 +1,19 @@
 # Bat project
 
-Here you find some Python scripts and other resources that were created for bat surveys as part of a flora, fauna and habitat (FFH) monitoring project in Germany.<br>
+Here you find some Python scripts and other resources that were created for bat surveys as part of a fauna, flora and habitat (FFH) monitoring project by an organisation in Germany: <a href="http://bi-wollenberg.org" target="_blank"> BI&nbsp;„Rettet&nbsp;den&nbsp;Wollenberg“&nbsp;e.V.</a><br>
 <br>
-Some scripts involve mass data handling of bat call recordings from the Bat-Pi, a Raspberry Pi based ultrasonic bat call recorder. For more information on the Bat-Pi device, please see http://www.bat-pi.eu/EN/index-EN.html<br>
+Some scripts involve mass data handling of bat call recordings from the <a href="http://www.bat-pi.eu/EN/index-EN.html"  target="_blank">Bat-Pi 1</a>, a great Raspberry Pi based ultrasonic bat call recorder and the transfer of ultrasonic bat sounds to <a href="http://www.wsl.ch/dienstleistungen/produkte/software/batscope/index_EN" target="_blank">BatScope&nbsp;3</a>, the best free bat call analysis and classification software that I know ;)<br>
 <br>
-Other scripts involve georeferencing and handling of sonogram screenshots from the SSF BAT 3 hand held bat detector.<br>
-Pease see http://www.mekv.de/bat3/index.htm for more information on that device. (German website)<br>
+Other scripts will be made available soon and involve georeferencing and handling of sonogram screenshots from the <a href="http://www.mekv.de/bat3/index.htm" target="_blank">SSF&nbsp;BAT&nbsp;3</a> hand held bat detector.<br>
 <br>
-The code is provided in the hope that it is helpful to other bat friends and nature enthousiasts.
+All code is provided in the hope that it is helpful to other bat friends and nature enthousiasts. We are open for questions or feedback. Please feel free to contact me through GitHub or drop a message in <a href=mailto:ffhmonitor@gmail.com>my mailbox</a>.<br>
+<br>
+FVG, January 2017
+<hr>
 
 ## makeBatScopeXml.py
 #### Georeferencing Bat-Pi recordings and prepare the transfer to bat call analyzer software
-Script for the Bat Pi v1 (first edition). It georeferences all wav files and creates an XML meta data file for each recording, allowing them to be transferred to BatScope 3, a bat call analyser and classification software. See http://www.batscope.ch/ for more information.
+Script for the Bat Pi v1 (first edition). It georeferences all wav files and creates an XML meta data file for each recording, allowing them to be transferred to <a href="http://www.wsl.ch/dienstleistungen/produkte/software/batscope/index_EN" target="_blank">BatScope&nbsp;3</a>, a bat call analyser and classification software for MAc OS X. 
 
 What this script does:
 <ul><li>it reads current Bat Pi device settings from /out/bin/recordings.sh
@@ -29,10 +31,10 @@ Also note that a special ImporterModule for the BatScope software is needed in o
 ## Bat-Pi v1 Importer (BatPi1ImporterModule.py)
 #### Importer module for the transfer of Bat Pi recordings into a BatScope 3 database
 
-In order to import the Bat Pi 1 wav files and their corresponding XML metadata, this script must reside on the BatScope Computer in the directory where BatScope's importer modules reside. This directory usually is:<br><b>/Library/Application Support/BatScope/ImporterModules</b>
+In order to import the Bat Pi 1 wav files and their corresponding XML metadata, this script must reside on the BatScope Computer in the directory where BatScope's importer modules reside. This directory usually is:<br><code>/Library/Application Support/BatScope/ImporterModules</code>
 
-In BatScope 3, the process is called 'SD card conversion'. The /out/data directory of the Bat-Pi has to be copied on to the BatScope computer and is seen by BatScope as an 'SD Card'. The sub directory /out/data/batscope should contain XML files with metadata for each recording. See the makeBatScopeXml.py script above for creating those XML meta data files.
+In BatScope 3, the process is called 'SD card conversion'. The /out/data directory of the Bat-Pi has to be copied on to the BatScope computer and is seen by BatScope as an 'SD Card'. The sub directory <code>/out/data/batscope</code> should contain XML files with metadata for each recording. See the makeBatScopeXml.py script above for creating those XML meta data files.
 
-As soon as the importer script is present on your BatScope computer, BatScope will offer a data converter called "Bat-Pi v1 Importer". For more information, please consult the BatScope manual on how to access the convert functionality. Look for a chapter called 'Converting and Importing Foreign Audio Data'. The manual can be found on the BatScope homepage: http://www.wsl.ch/dienstleistungen/produkte/software/batscope/index_EN 
+As soon as the importer script is present on your BatScope computer, BatScope will offer a data converter called "Bat-Pi v1 Importer". For more information, please consult the BatScope manual on how to access the convert functionality. Look for a chapter called 'Converting and Importing Foreign Audio Data'. The manual can be found on the <a href="http://www.wsl.ch/dienstleistungen/produkte/software/batscope/index_EN" target="_blank">BatScope&nbsp;homepage</a>.
 
 
