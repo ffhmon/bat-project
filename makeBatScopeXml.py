@@ -1,9 +1,14 @@
 #!/usr/lib/python3.2
 
+# General description:
 # Script for Raspberry Bat Pi v1 (first edition). See http://www.bat-pi.eu for more information.
-# Creates XML meta data files, allowing the Bat Pi recordings to be transferred to BatScope analyser software. See http://www.batscope.ch/ 
+# Georeferences bat call recordings (WAV files), and finds temperatures for each recording
+# It creates XML meta data files, allowing the recordings to be transferred to BatScope analyser software. See http://www.batscope.ch/ 
+# The script serves a bat survey as part of a fauna, flora and habitat monitoring project 
+# Organisation: BI Rettet den Wollenberg e.V. see http://bi-wollenberg.org/ (German site)
+# Author      : FVG - ffhmonitor@gmail.com
 
-# What this script does:
+# Script actions in detail:
 # - it reads current Bat Pi device settings from /out/bin/recordings.sh
 # - it reads GPS track points from /out/data/gps (gpx-file or an alternative 'fixed-geo.txt') and geo references all recordings
 # - it reads logged temperatures from a /out/ENVLOG.TXT file for each recording
@@ -14,13 +19,14 @@
 # Note, that a special ImporterModule for BatScope is needed. 
 # Look for the Bat-Pi v1 Importer at https://github.com/ffhmon/bat-project
 
-# Author: Fred Van Gestel - ffhmonitor@gmail.com
-# Tested under Linux Mint 17.3 Rosa and Mac OS X 10.7.5
-
-# This file on GitHub: https://github.com/ffhmon/bat-project/blob/master/makeBatScopeXml.py
+# Tested on a Bat-Pi with Rasbian Wheezy, it also runs on Linux Mint 17.3 Rosa and on Mac OS X 10.7.5
+# Typical path on the Bat-Pi would be: /out/bin
+# This file is on GitHub: https://github.com/ffhmon/bat-project/makeBatScopeXml.py
 # Licence: GNU General Public Licence v3
 
-# Script Version 1.0 - January 6, 2017
+# Script history:
+# Version 1.0 - January 6, 2017 - initial commit
+# Version 1.1 - January 8, 2017 - added log output, added organisation reference
 
 #----------------------------------------------------------------------------------
 def parseWavFileDateTime(wavFileName):
@@ -58,7 +64,9 @@ def getWavFileTemperature(wavFile, envLogFile, timeSavingCorrection):
     		
         currentWav = os.path.basename(wavFile)
         wavFileDateElements = parseWavFileDateTime(currentWav)
-                
+        
+        #wavDateTime = wavDateTime - datetime.timedelta(hours=timeSavingCorrection)
+
         # get temperature from environment file
         if os.path.exists(environmentFile):
             with open (environmentFile) as tempFile:
@@ -145,6 +153,7 @@ import datetime, glob, linecache, os, sys
 # default variables - can be changed by sys.argv ###
 
 # default base path for all data and bin files
+# basePath = "/home/fred/projekte/batpi/raw/20160709-tr1/"
 basePath = os.getcwd() + '/'
 
 # default UTC time correction in hours for time stamp calculations.
@@ -536,6 +545,58 @@ try:
         fCsv.close()
 except:
         print('Error writing pi-session.csv file.')
+
+# create the log file 
+try:
+        outputLog = reportsPath + 'session-georeference.log'
+        fLog = open(outputLog, 'w')
+        fLog.write(str(datetime.datetime.now()) + " log created by makeBatScopeXml.py \n")
+        fLog.write('----------------------------------------------------------------\n')
+        fLog.write (str(wavNumber) + ' valid wav files.\n')
+        fLog.write (str(gpxNumber) + ' valid gpx files.\n')
+        if not os.path.exists(environmentFile):
+                fLog.write('No ENVLOG.TXT found. Using default temperature of -1000 C.\n')
+        else:
+                fLog.write('ENVLOG.TXT found.\n')
+        
+        if os.path.exists(fixedGeoFile):        
+                fLog.write('fixed-geo.txt found:\n')
+                fLog.write('  ---> fixed latitude  : ' + fixedLat + '\n')
+                fLog.write('  ---> fixed longitude : ' + fixedLong + '\n')
+                fLog.write('  ---> fixed altitude  : ' + fixedAltitude + '\n')
+        fLog.write('----------------------------------------------------------------\n')    
+        fLog.write ("Bat Pi device settings\n")
+        fLog.write('----------------------------------------------------------------\n')
+        fLog.write('Device name     : ' + deviceName + "\n")
+        fLog.write('Device firmware : ' + str(deviceFirmware) + "\n")
+        fLog.write('Mic Version     : ' + str(micVersion) + "\n")
+        fLog.write('Pretrigger      : ' + str(preTrigger) + ' msec\n')
+        fLog.write('Posttrigger     : ' + str(postTrigger) + ' msec\n')
+        fLog.write('Treshold start  : ' + startTreshold + ' %\n')
+        fLog.write('Treshold stop   : ' + stopTreshold+ ' %\n')
+        fLog.write('Start frequency : ' + str(startFrequency) + ' Hz\n') 
+        fLog.write('Record length   : ' + recordLength + ' sec\n')
+        fLog.write('Record volume   : ' + volume + "\n") 
+        fLog.write('Record priority : ' + priority + "\n") 
+        fLog.write('Record buffer   : ' + recbuffer + "\n") 
+        fLog.write('----------------------------------------------------------------\n')
+        fLog.write(str(processedFixedFiles) + ' wav files georeferenced using FIXED coordinates.\n')
+        fLog.write(str(processedFiles) + ' wav files georeferenced using GPX data.\n')
+        fLog.write(str(skippedFiles) + ' wav files could NOT be georeferenced:\n')
+        fLog.write('----------------------------------------------------------------\n')
+
+        if skippedFiles > 0:
+                fLog.write('Files without geo reference:\n')
+                for skipped in notReferenced:
+                    fLog.write("  " + skipped + "\n")
+                fLog.write('----------------------------------------------------------------\n')
+        
+        fLog.close()
+except:
+        e = sys.exc_info()
+        print(e)
+        print('Error writingsession-georeference.log file.')
+
 
 print('Pi settings for this export archived in : ')
 print(reportsPath + 'pi-session.xml')
