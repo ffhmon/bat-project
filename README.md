@@ -38,6 +38,7 @@ In BatScope 3, the process is called 'SD card conversion'. The /out/data directo
 As soon as the importer script is present on your BatScope computer, BatScope will offer a data converter called "Bat-Pi v1 Importer". For more information, please consult the BatScope manual on how to access the convert functionality. Look for a chapter called 'Converting and Importing Foreign Audio Data'. The manual can be found on the <a href="http://www.wsl.ch/dienstleistungen/produkte/software/batscope/index_EN" target="_blank">BatScope&nbsp;homepage</a>.
 
 <hr>
+
 ## MySQL scripts for creating a database for BatScope data
 #### create-call-import-table.sql and create-sequence-import-table.sql
 The BatScope dataset consists of two tables:
