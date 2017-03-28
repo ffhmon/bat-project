@@ -40,13 +40,13 @@ As soon as the importer script is present on your BatScope computer, BatScope wi
 <hr>
 
 ## MySQL scripts for creating a database for BatScope data
-#### create-call-import-table.sql and create-sequence-import-table.sql
+#### create-batscope-tables.sql
 The BatScope dataset consists of two tables:
 <ul>
 <li>2016-call-import</li>
 <li>2016-sequence-import</li>
 </ul>
-You can build those tables from BatScope CSV exports using any good MySQL database tool or by using the scripts provided here.
+You can build those tables from BatScope CSV exports using any good MySQL database tool or by using the script provided here.
 
 ## MySQL scripts for selecting sequence and call data from a BatScope dataset
 #### get-genus-sequences.sql
