@@ -46,7 +46,9 @@ The BatScope dataset consists of two tables:
 <li>2016-call-import</li>
 <li>2016-sequence-import</li>
 </ul>
-You can build those tables from BatScope CSV exports using any good MySQL database tool or by using the script provided here.
+
+You can build those tables from BatScope CSV exports using any good MySQL database tool or by using the script provided here. 
+You also could download a full year's survey dataset from <a href="https://drive.google.com/drive/folders/0B5SuoFpMQB38LW96bzlJRHdhekU" target="_blank">our file repository on Google Drive</a>.
 
 ## MySQL scripts for selecting sequence and call data from a BatScope dataset
 #### get-genus-sequences.sql
