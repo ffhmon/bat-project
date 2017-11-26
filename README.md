@@ -22,7 +22,7 @@ Script for the <a href="http://www.bat-pi.eu/EN/index-EN.html"  target="_blank">
 <li>bat nights are organized in bat observation sites
 <li>recordings are moved preserving original file timestamps
 </ul>
-Please see comments in the script for more detaled information.
+Please see comments in the script for more detailed information.
 <hr>
 
 ## makeBatScopeXml.py
