@@ -14,10 +14,18 @@ All code is provided in the hope that it is helpful to other bat friends and nat
 <br>
 FVG, November 2017
 <hr>
+## makeBatNightDirectories.py
+Script for the <a href="http://www.bat-pi.eu/EN/index-EN.html"  target="_blank">Bat-Pi&nbsp;</a> (first and second edition). It will prepare and reorganise your bat recordings for further automatic mass data processing, e.g. with SCAN'R. What it does:
 
+<ul><li>it creates a consistent directory structure for each bat observation night
+<li>bat nights are organized in bat observation sites
+<li>recordings are moved preserving original file timestamps
+</ul>
+Please see comments in the script for more detaled information.
+<hr>
 ## makeBatScopeXml.py
 #### Georeferencing Bat-Pi recordings and prepare the transfer to bat call analyzer software
-Script for the <a href="http://www.bat-pi.eu/EN/index-EN.html"  target="_blank">Bat-Pi&nbsp;</a> (first edition). It georeferences all wav files and creates an XML meta data file for each recording, allowing them to be transferred to <a href="http://www.wsl.ch/dienstleistungen/produkte/software/batscope/index_EN" target="_blank">BatScope&nbsp;3</a>, a bat call analyser and classification software for Mac OS X. 
+Script for the <a href="http://www.bat-pi.eu/EN/index-EN.html"  target="_blank">Bat-Pi&nbsp;</a> (first and second edition). It georeferences all wav files and creates an XML meta data file for each recording, allowing them to be transferred to <a href="http://www.wsl.ch/dienstleistungen/produkte/software/batscope/index_EN" target="_blank">BatScope&nbsp;3</a>, a bat call analyser and classification software for Mac OS X. 
 
 What this script does:
 <ul><li>it reads current Bat Pi device settings from /out/bin/recordings.sh
@@ -28,9 +36,9 @@ What this script does:
 <li>it writes a session XML with archived device settings for the current session into /out/data/reports/pi-session.xml 
 <li>it writes a session CSV with archived device settings for the current session into /out/data/reports/pi-session.csv
 </ul>
-Please note, that the Bat-Pi normally does not log temperatures. We built our own temperature datalogger and provide an environment log file accordingly. The data format is documented in the script.
+Please note, that the Bat-Pi normally does not log temperatures. We built our <a href="https://github.com/ffhmon/arduino" target="_blank">own environment datalogger</a> and provide an environment log file accordingly. The data format is documented in the script.
 
-Also note that a special ImporterModule for the BatScope software is needed in order to read the XML meta data files. (See the Bat-Pi v1 Importer below). 
+Also note that a special ImporterModule for the BatScope software is needed in order to read the XML meta data files. (See the Bat-Pi Importer below). 
 
 ## Bat-Pi Importer (BatPi1ImporterModule.py)
 #### Importer module for the transfer of Bat Pi recordings into a BatScope 3 database
