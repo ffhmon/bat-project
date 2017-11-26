@@ -14,6 +14,7 @@ All code is provided in the hope that it is helpful to other bat friends and nat
 <br>
 FVG, November 2017
 <hr>
+
 ## makeBatNightDirectories.py
 Script for the <a href="http://www.bat-pi.eu/EN/index-EN.html"  target="_blank">Bat-Pi&nbsp;</a> (first and second edition). It will prepare and reorganise your bat recordings for further automatic mass data processing, e.g. with SCAN'R. What it does:
 
@@ -23,6 +24,7 @@ Script for the <a href="http://www.bat-pi.eu/EN/index-EN.html"  target="_blank">
 </ul>
 Please see comments in the script for more detaled information.
 <hr>
+
 ## makeBatScopeXml.py
 #### Georeferencing Bat-Pi recordings and prepare the transfer to bat call analyzer software
 Script for the <a href="http://www.bat-pi.eu/EN/index-EN.html"  target="_blank">Bat-Pi&nbsp;</a> (first and second edition). It georeferences all wav files and creates an XML meta data file for each recording, allowing them to be transferred to <a href="http://www.wsl.ch/dienstleistungen/produkte/software/batscope/index_EN" target="_blank">BatScope&nbsp;3</a>, a bat call analyser and classification software for Mac OS X. 
