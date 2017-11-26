@@ -8,7 +8,7 @@ Some MySQL scripts are provided as well for those whishing to transfer BatScope 
 <br>
 Another script deals with georeferencing and handling of sonogram screenshots from the <a href="http://www.mekv.de/bat3/index.htm" target="_blank">SSF&nbsp;BAT&nbsp;3</a> hand held bat detector.<br>
 <br>
-If you are interested in our Arduino based devices used in the field during bat observation, you might want to visit the pages wirh our <a href="https://github.com/ffhmon/arduino" target="_blank">Arduino-Sketches</a>.<br>
+If you are interested in our Arduino based devices used in the field during bat observation, you might want to visit the pages with our <a href="https://github.com/ffhmon/arduino" target="_blank">Arduino-Sketches</a>.<br>
 <br>
 All code is provided in the hope that it is helpful to other bat friends and nature enthousiasts. We are open for questions or feedback. Please feel free to contact me through GitHub or drop a message in <a href=mailto:ffhmonitor@gmail.com>my mailbox</a>.<br>
 <br>
