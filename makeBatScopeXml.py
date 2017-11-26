@@ -19,14 +19,24 @@
 # Note, that a special ImporterModule for BatScope is needed. 
 # Look for the Bat-Pi v1 Importer at https://github.com/ffhmon/bat-project
 
-# Tested on a Bat-Pi with Rasbian Wheezy, it also runs on Linux Mint 17.3 Rosa and on Mac OS X 10.7.5
+# Tested with Bat-Pi v1 and v2
+# Runs on Linux Mint 17.3 Rosa and on Mac OS X 10.7.5
 # Typical path on the Bat-Pi would be: /out/bin
 # This file is on GitHub: https://github.com/ffhmon/bat-project/makeBatScopeXml.py
 # Licence: GNU General Public Licence v3
 
 # Script history:
 # Version 1.0 - January 6, 2017 - initial commit
-# Version 1.1 - January 8, 2017 - added log output, added organisation reference
+
+# Version 1.1 - January 8, 2017
+#   - added log output, added organisation reference
+
+# Version 1.2 - May 7, 2017
+#   - fixed Syntax error causing 'Wrong Bat Pi firmware version' message
+
+# Version 1.3 - November 26, 2017
+#   - fixed incorrect trigger percentage display
+#   - added support for Bat Pi v2
 
 #----------------------------------------------------------------------------------
 def parseWavFileDateTime(wavFileName):
@@ -202,7 +212,7 @@ try:
     settingsFile = piBinPath + "recordings.sh"
     environmentFile = basePath + "ENVLOG.TXT"
 
-    # see if all paths exist
+    # see if base path exist
     if not os.path.exists(piRawDataPath):
         print('Sorry, can not find the Bat-Pi raw data input directory:')
         print(piRawDataPath)
@@ -211,6 +221,7 @@ try:
         sys.exit()
         
     if not os.path.exists(piGpsPath):
+        os.makedirs(piGpsPath)
         print('Can not find the Bat-Pi GPS directory. Check path and try again.')
         sys.exit()
 
@@ -221,72 +232,131 @@ except:
     print("Error accessing Bat-Pi files.")
     sys.exit()
 
-print ("Bat Pi device settings")
+print ("Bat Pi Version and firmware")
 print('----------------------------------------------------------------')
 
 try:
     # get current Bat Pi parameters
     with open(settingsFile) as batPi:
-        for i, line in enumerate(batPi):        
-            if 'export' in line:
-                if 'pauseVorherSec' in line:
-                    pos1=line.find('"')
-                    pos2=line.find('"',pos1+1)                
-                    preTrigger = int(float(line[pos1+1:pos2])*1000)
-                if 'pauseNachherSec' in line:
-                    pos1=line.find('"')
-                    pos2=line.find('"',pos1+1)  
-                    postTrigger = int(float(line[pos1+1:pos2])*1000)
-                if 'schwelleVorher' in line:
-                    pos1=line.find('"')
-                    pos2=line.find('"',pos1+1)  
-                    startTreshold = line[pos1+1:pos2 -1]
-                if 'schwelleNachher' in line:
-                    pos1=line.find('"')
-                    pos2=line.find('"',pos1+1)  
-                    stopTreshold = line[pos1+1:pos2-1]
-                if 'PRIORITY' in line:
-                    pos1=line.find('"')
-                    pos2=line.find('"',pos1+1)  
-                    priority = line[pos1+1:pos2]
-                if 'BUFFER' in line:
-                    pos1=line.find('"')
-                    pos2=line.find('"',pos1+1)  
-                    recbuffer = line[pos1+1:pos2]
-            if 'nice' in line:
-                volume = line[72:73]
-                startFrequency = int(line[79:81])*1000
-                recordLength = line[169:170]
+        for i, line in enumerate(batPi):
             if 'Project 2014' in line:
-                    deviceName = 'BatPi-v1'     # first Bat-Pi generation
-                    deviceFirmware = '1510'     # ROM released in Octobre 2015
+                deviceName = 'BatPi-v1'  # first Bat-Pi generation
+                deviceFirmware = '1510'  # ROM released in Octobre 2015
+            if '(c) 2014, 2015' in line:
+                deviceName = 'BatPi-v2'  # second Bat-Pi generation
+                deviceFirmware = '1610'  # ROM released in Octobre 2016
             if 'USBDEVICE_MIC_ID_PREFIX=' in line:
-                    micVersion = ''
-                    pos1=line.find('"')
-                    pos2=line.find('"',pos1+1)  
-                    usbDevice = line[pos1+1:pos2]
-                    if usbDevice == '0869':
-                            micVersion = 'Dodotronic 250'
-                            deviceName = deviceName + '-Dodo250'
-                                                            
+                micVersion = ''
+                pos1 = line.find('"')
+                pos2 = line.find('"', pos1 + 1)
+                usbDevice = line[pos1 + 1:pos2]
+                if usbDevice == '0869':
+                    micVersion = 'Dodotronic 250'
+                    deviceName = deviceName + '-Dodo250'
 
     # inform user
     print('Device name     : ' + deviceName)
     print('Device firmware : ' + str(deviceFirmware))
+except:
+    print("Error reading Bat Pi settings. Wrong Bat Pi firmware version?")
+    e = sys.exc_info()
+    print(e)
+    sys.exit(1)
+
+print('----------------------------------------------------------------')
+
+try:
+
+    # init vars for Bat Pi settings
+    preTrigger = ''
+    postTrigger = ''
+    startTreshold = ''
+    stopTreshold = ''
+    startFrequency = ''
+    recordLength = ''
+    volume = ''
+    priority = ''
+    recbuffer = ''
+
+    if(deviceFirmware=='1510'):
+        # get Bat Pi v1 parameters
+        with open(settingsFile) as batPi:
+            for i, line in enumerate(batPi):
+                if 'export' in line:
+                    if 'pauseVorherSec' in line:
+                        pos1=line.find('"')
+                        pos2=line.find('"',pos1+1)
+                        preTrigger = int(float(line[pos1+1:pos2])*1000)
+                    if 'pauseNachherSec' in line:
+                        pos1=line.find('"')
+                        pos2=line.find('"',pos1+1)
+                        postTrigger = int(float(line[pos1+1:pos2])*1000)
+                    if 'schwelleVorher' in line:
+                        pos1=line.find('"')
+                        pos2=line.find('"',pos1+1)
+                        startTreshold = int(float(line[pos1+1:pos2 -1]) * 100)
+                    if 'schwelleNachher' in line:
+                        pos1=line.find('"')
+                        pos2=line.find('"',pos1+1)
+                        stopTreshold = int(float(line[pos1+1:pos2-1]) * 100)
+                    if 'PRIORITY' in line:
+                        pos1=line.find('"')
+                        pos2=line.find('"',pos1+1)
+                        priority = line[pos1+1:pos2]
+                    if 'BUFFER' in line:
+                        pos1=line.find('"')
+                        pos2=line.find('"',pos1+1)
+                        recbuffer = line[pos1+1:pos2]
+                if 'nice' in line:
+                    volume = line[72:73]
+                    startFrequency = int(line[79:81])*1000
+                    recordLength = line[169:170]
+
+    if (deviceFirmware == '1610'):
+        # get Bat Pi v2 parameters
+        with open(basePath + "etc/batpi/recording.conf") as batPi:
+            for i, line in enumerate(batPi):
+                if 'pauseVorherSec' in line:
+                    pos1 = line.find('=')
+                    preTrigger = int(float(line[pos1 + 1:]) * 1000)
+                if 'pauseNachherSec' in line:
+                    pos1 = line.find('=')
+                    pos2 = line.find('t')
+                    postTrigger = int(float(line[pos1 + 1:pos2]))
+                if 'schwelleVorher' in line:
+                    pos1 = line.find('=')
+                    startTreshold = int(float(line[pos1 + 1:]) * 100)
+                if 'schwelleNachher' in line:
+                    pos1 = line.find('=')
+                    stopTreshold = int(float(line[pos1 + 1:]) * 100)
+                if 'RECVOL' in line:
+                    pos1 = line.find('=')
+                    volume = int(float(line[pos1 + 1:]))
+                if 'TRIGFREQ' in line:
+                    pos1 = line.find('=')
+                    pos2 = line.find('k')
+                    startFrequency = int(float(line[pos1 + 1:pos2])) * 1000
+                if 'TRIMNACH' in line:
+                    pos1 = line.find('=')
+                    recordLength = int(float(line[pos1 + 1:]))
+
+    # inform user
     print('Mic Version     : ' + str(micVersion))
     print('Pretrigger      : ' + str(preTrigger) + ' msec')
     print('Posttrigger     : ' + str(postTrigger) + ' msec')
-    print('Treshold start  : ' + startTreshold + ' %')
-    print('Treshold stop   : ' + stopTreshold+ ' %')
-    print('Start frequency : ' + str(startFrequency) + ' Hz') 
-    print('Record length   : ' + recordLength + ' sec')
-    print('Record volume   : ' + volume) 
-    print('Record priority : ' + priority) 
-    print('Record buffer   : ' + recbuffer) 
+    print('Treshold start  : ' + str(startTreshold) + ' %')
+    print('Treshold stop   : ' + str(stopTreshold) + ' %')
+    print('Start frequency : ' + str(startFrequency) + ' Hz')
+    print('Record length   : ' + str(recordLength) + ' sec')
+    print('Record volume   : ' + str(volume))
+    print('Record priority : ' + priority)
+    print('Record buffer   : ' + recbuffer)
 except:
-    print("Error reading Bat Pi settings.")
+    print("Error reading Bat Pi settings. Wrong Bat Pi firmware version?")
+    e = sys.exc_info()
+    print(e)
     sys.exit()
-    
+
 print('----------------------------------------------------------------')
 
 try:
@@ -300,7 +370,7 @@ try:
             if wavSize > 1000:
                 if "-N-" in wavFiles[index]:
                     validWavFiles.append(item)
-                    wavNumber=wavNumber+1               
+                    wavNumber=wavNumber+1
     print (str(wavNumber) + ' valid wav files.')
 
     # see if there are GPS data logged (gpx file is bigger as 398 bytes)
@@ -311,7 +381,7 @@ try:
             gpx.seek(0, os.SEEK_END)
             gpxSize=gpx.tell()
             if gpxSize > 398:
-                points=list()            
+                points=list()
                 validGpxFiles.append(item)
                 gpxNumber=gpxNumber+1
     print (str(gpxNumber) + ' valid gpx files.')
@@ -336,8 +406,8 @@ try:
                     pos1=line.find('"')
                     pos2=line.find('"',pos1+1)
                     fixedAltitude=line[pos1+1:pos2]
-        
-        # inform user 
+
+        # inform user
         print('Fixed latitude  : ' + fixedLat)
         print('Fixed longitude : ' + fixedLong)
         print('Fixed altitude  : ' + fixedAltitude)
@@ -365,7 +435,7 @@ try:
 except:
     print("Unexpected error creating output directories.")
     sys.exit()
-    
+
 print('----------------------------------------------------------------')
 
 print('Start georeferencing. This may take some time. Please hang on...')
@@ -382,37 +452,37 @@ try:
         for wavFile in validWavFiles:
 
             theTemperature = getWavFileTemperature(wavFile, environmentFile, utcTimeCorrection)
-            
+
             currentWav = os.path.basename(wavFile)
             wavFileDateElements = parseWavFileDateTime(currentWav)
-            
+
             print (currentWav + ": " + str(theTemperature) + " degrees C, now processing...")
             locationDevice = 'gps'
             gpsValid = 'never'
-            
+
             if fixedGeo == 1:
                     lat = fixedLat
                     long = fixedLong
                     altitude = fixedAltitude
                     gpsValid = 'old'
                     hdop = '0'
-                    sats = '0'                    
+                    sats = '0'
                     found = 1
                     processedFixedFiles = processedFixedFiles+1
-            else:        
+            else:
 
                 theWavDateTime = wavFileDateElements['wavDateTime'] - datetime.timedelta(hours=utcTimeCorrection)
 
                 wavTimeUpper = theWavDateTime + datetime.timedelta(seconds=5)
                 wavTimeLower = theWavDateTime - datetime.timedelta(seconds=5)
-            
+
                 wavDate = str(wavFileDateElements['wavYear']) + str(wavFileDateElements['wavMonth']) + str(wavFileDateElements['wavDay'])
                 wavTime = str(wavFileDateElements['wavHour']) + str(wavFileDateElements['wavMinute']) + str(wavFileDateElements['wavSecond'])
-            
+
                 found = 0
-                            
+
                 for currentGpx in validGpxFiles:
-                        
+
                     with open (currentGpx) as gpxf:
                         points=list()
                         for i, line in enumerate(gpxf):
@@ -438,20 +508,20 @@ try:
                                 pointDateTime=datetime.datetime(int(yearString), int(monthString), int(dayString), int(hourString), int(minuteString), int(secondString))
 
                                 if pointDateTime<wavTimeUpper and pointDateTime>wavTimeLower:
-                  
+
                                         lat = trackpoint[15:24]
                                         long = trackpoint[31:39]
                                         altitude = elevation[9:19]
                                         hdop = hdopString[10:13]
                                         sats = satstring[9:10]
-                                        gpsValid = 'yes'                                        
+                                        gpsValid = 'yes'
 
                                         processedFiles=processedFiles+1
-                                        referenced.append([currentWav,lat,long,altitude])                                        
-                                
-                                        found = 1                        
+                                        referenced.append([currentWav,lat,long,altitude])
+
+                                        found = 1
                                         break
-                                
+
             if found==0:
                 skippedFiles = skippedFiles + 1
                 notReferenced.append(currentWav)
@@ -459,17 +529,17 @@ try:
                 long = '0'
                 altitude = '0'
                 hdop = '0'
-                sats = '0'                
+                sats = '0'
 
             #write metadata to a xml file for each recording
             fileName, fileExtension=os.path.splitext(currentWav)
-            currentXml = batScopePath + fileName + '.xml'                                
+            currentXml = batScopePath + fileName + '.xml'
 
             writeBatScopeXml(currentXml, currentWav, deviceName, currentWav[10:18] + currentWav[19:25], locationDevice, gpsValid, \
                     lat, long, altitude, hdop, sats, str(theTemperature), \
                     currentWav[0:7], deviceFirmware, \
                     str(startFrequency), str(preTrigger), str(postTrigger))
-                        
+
 except:
         print('Error georeferencing recording files.')
 
@@ -495,7 +565,7 @@ try:
 
                 fKml = open(currentKml, 'w')
                 fKml.write("<?xml version='1.0' encoding='UTF-8'?>\n")
-                fKml.write("<kml>\n")        
+                fKml.write("<kml>\n")
                 fKml.write("<Document>\n")
                 fKml.write("    <name>" + currentKml +"</name>\n")
                 for geoPoint in referenced:
@@ -513,7 +583,7 @@ try:
                 print('----------------------------------------------------------------')
 except:
         print('Error building pi-route.kml file.')
-        
+
 # summarize and archive pi settings for this export session
 try:
         fPiXml = open(reportsPath + 'pi-session.xml', 'w')
@@ -524,11 +594,11 @@ try:
         fPiXml.write("   <FixedGeoPosition>" + str(fixedGeo) + "</FixedGeoPosition>\n")
         fPiXml.write("   <PreTrigger>" + str(preTrigger) + " msec</PreTrigger>\n")
         fPiXml.write("   <PostTrigger>" + str(postTrigger) + " msec</PostTrigger>\n")
-        fPiXml.write("   <StartTreshold>" + startTreshold + " %</StartTreshold>\n")
-        fPiXml.write("   <StopTreshold>" + stopTreshold + " %</StopTreshold>\n")
+        fPiXml.write("   <StartTreshold>" + str(startTreshold) + " %</StartTreshold>\n")
+        fPiXml.write("   <StopTreshold>" + str(stopTreshold) + " %</StopTreshold>\n")
         fPiXml.write("   <StartFrequency>" + str(startFrequency) + " Hz</StartFrequency>\n")
-        fPiXml.write("   <RecordLength>" + recordLength + " sec</RecordLength>\n")
-        fPiXml.write("   <RecordVolumeLevel>" + volume + "</RecordVolumeLevel>\n")
+        fPiXml.write("   <RecordLength>" + str(recordLength) + " sec</RecordLength>\n")
+        fPiXml.write("   <RecordVolumeLevel>" + str(volume) + "</RecordVolumeLevel>\n")
         fPiXml.write("   <RecordPriority>" + priority + "</RecordPriority>\n")
         fPiXml.write("   <RecordBuffer>" + recbuffer + "</RecordBuffer>\n")
         fPiXml.write("</PiSession>\n")
@@ -541,12 +611,12 @@ try:
         outputCsv = reportsPath + 'pi-session.csv'
         fCsv = open(outputCsv, 'w')
         fCsv.write("DateTime;BatPiDevice;Recordings;FixedGeoPosition;PreTrigger;PostTrigger;StartTreshold;StopTreshold;StartFrequency;RecordLength;RecordVolumeLevel;RecordPriority;RecordBuffer\n")
-        fCsv.write(str(wavDateTime) + ";" + currentWav[0:7] + ";" + str(processedFiles) + ";" + str(fixedGeo) + ";" + str(preTrigger) + ";" + str(postTrigger) + ";" + startTreshold + ";" + stopTreshold + ";" + str(startFrequency) + ";" + recordLength + ";" + volume + ";" + priority + ";" + recbuffer + "\n")
+        fCsv.write(str(wavDateTime) + ";" + currentWav[0:7] + ";" + str(processedFiles) + ";" + str(fixedGeo) + ";" + str(preTrigger) + ";" + str(postTrigger) + ";" + str(startTreshold) + ";" + str(stopTreshold) + ";" + str(startFrequency) + ";" + str(recordLength) + ";" + str(volume) + ";" + priority + ";" + recbuffer + "\n")
         fCsv.close()
 except:
         print('Error writing pi-session.csv file.')
 
-# create the log file 
+# create the log file
 try:
         outputLog = reportsPath + 'session-georeference.log'
         fLog = open(outputLog, 'w')
@@ -558,13 +628,13 @@ try:
                 fLog.write('No ENVLOG.TXT found. Using default temperature of -1000 C.\n')
         else:
                 fLog.write('ENVLOG.TXT found.\n')
-        
-        if os.path.exists(fixedGeoFile):        
+
+        if os.path.exists(fixedGeoFile):
                 fLog.write('fixed-geo.txt found:\n')
                 fLog.write('  ---> fixed latitude  : ' + fixedLat + '\n')
                 fLog.write('  ---> fixed longitude : ' + fixedLong + '\n')
                 fLog.write('  ---> fixed altitude  : ' + fixedAltitude + '\n')
-        fLog.write('----------------------------------------------------------------\n')    
+        fLog.write('----------------------------------------------------------------\n')
         fLog.write ("Bat Pi device settings\n")
         fLog.write('----------------------------------------------------------------\n')
         fLog.write('Device name     : ' + deviceName + "\n")
@@ -572,13 +642,13 @@ try:
         fLog.write('Mic Version     : ' + str(micVersion) + "\n")
         fLog.write('Pretrigger      : ' + str(preTrigger) + ' msec\n')
         fLog.write('Posttrigger     : ' + str(postTrigger) + ' msec\n')
-        fLog.write('Treshold start  : ' + startTreshold + ' %\n')
-        fLog.write('Treshold stop   : ' + stopTreshold+ ' %\n')
-        fLog.write('Start frequency : ' + str(startFrequency) + ' Hz\n') 
-        fLog.write('Record length   : ' + recordLength + ' sec\n')
-        fLog.write('Record volume   : ' + volume + "\n") 
-        fLog.write('Record priority : ' + priority + "\n") 
-        fLog.write('Record buffer   : ' + recbuffer + "\n") 
+        fLog.write('Treshold start  : ' + str(startTreshold) + ' %\n')
+        fLog.write('Treshold stop   : ' + str(stopTreshold) + ' %\n')
+        fLog.write('Start frequency : ' + str(startFrequency) + ' Hz\n')
+        fLog.write('Record length   : ' + str(recordLength) + ' sec\n')
+        fLog.write('Record volume   : ' + str(volume) + "\n")
+        fLog.write('Record priority : ' + priority + "\n")
+        fLog.write('Record buffer   : ' + recbuffer + "\n")
         fLog.write('----------------------------------------------------------------\n')
         fLog.write(str(processedFixedFiles) + ' wav files georeferenced using FIXED coordinates.\n')
         fLog.write(str(processedFiles) + ' wav files georeferenced using GPX data.\n')
@@ -590,7 +660,7 @@ try:
                 for skipped in notReferenced:
                     fLog.write("  " + skipped + "\n")
                 fLog.write('----------------------------------------------------------------\n')
-        
+
         fLog.close()
 except:
         e = sys.exc_info()
